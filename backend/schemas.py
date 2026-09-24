@@ -27,3 +27,25 @@ class HeroeRead(HeroeBase):
     id: int
     class Config:
         from_attributes = True
+
+# ---Lectura de relaciones ---
+class HeroesInFaccion(BaseModel):
+    id: int
+    nombre: str
+    clase_heroe: str
+    atributo_principal: str
+    class Config:
+        from_attributes = True
+
+class FaccionWithHeroes(FaccionRead):
+    heroes: list[HeroesInFaccion] = []
+
+class FaccionSimple(BaseModel):
+    id: int
+    nombre: str
+    recurso_especial: str | None = None
+    class Config:
+        from_attributes = True
+
+class HeroeWithFaccion(HeroeRead):
+    faccion: FaccionSimple | None = None
