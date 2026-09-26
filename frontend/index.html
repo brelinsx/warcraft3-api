@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warcraft 3 API - Portal</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<header><h1>Warcraft 3 API</h1><p>Portal de documentación y demo</p></header>
+<main>
+<section id="docs"><h2>Documentación</h2><p>Backend: <code>http://127.0.0.1:8000</code> - Docs: <a href="http://127.0.0.1:8000/docs" target="_blank">/docs</a></p>
+<ul><li><code>GET /facciones/</code> - listar</li><li><code>GET /heroes/</code> - listar con facción</li></ul>
+<div id="status">Estado: <span id="status-text">probando...</span></div>
+</section>
+<section id="facciones"><h2>Facciones</h2><div id="facciones-list">Cargando...</div></section>
+<form id="form-faccion"><h3>Nueva facción</h3>
+<input id="f-nombre" placeholder="Nombre (ej: Horda)" required minlength="2">
+<input id="f-recurso" placeholder="Recurso especial">
+<button>Crear</button></form>
+<div id="msg"></div>
+<section id="heroes"><h2>Héroes</h2><div id="heroes-list">Cargando...</div></section>
+<form id="form-heroe"><h3>Nuevo héroe</h3>
+<input id="h-nombre" placeholder="Nombre" required>
+<input id="h-clase" placeholder="Clase (Chamán)" required>
+<select id="h-atributo"><option>Fuerza</option><option>Agilidad</option><option>Inteligencia</option></select>
+<select id="h-faccion"></select>
+<button>Crear héroe</button></form>
+<input id="search" placeholder="Buscar héroe...">
+<select id="filter-faccion"><option value="">Todas las facciones</option></select>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
