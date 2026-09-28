@@ -122,6 +122,67 @@ async function init() {
   }
 }
 
+/* ===== Sonidos por facción — motor mínimo v5 ===== */
+console.log("audio engine v5");
+const SOUND_MAP = [
+  { keys: ["horda", "orco"], src: "assets/horda.mp3" },
+  { keys: ["alianza", "humano"], src: "assets/alianza.mp3" },
+  { keys: ["muertos", "azote"], src: "assets/azote.mp3" },
+  { keys: ["elfos"], src: "assets/elfos.mp3" },
+];
+const SOUND_DEFAULT = "assets/horda.mp3";
+const soundBuffers = {};
+let audioCtx = null;
+
+function resolveSoundSrc(faccionNombre) {
+  const nombreLimpio = String(faccionNombre || "").toLowerCase();
+  for (const entry of SOUND_MAP) {
+    if (entry.keys.some((k) => nombreLimpio.includes(k))) return entry.src;
+  }
+  return SOUND_DEFAULT;
+}
+
+function ensureCtx() {
+  if (!audioCtx) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+  }
+  if (audioCtx.state === "suspended") void audioCtx.resume();
+  return audioCtx;
+}
+
+async function decodeToBuffer(ctx, src) {
+  const res = await fetch(src);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+  soundBuffers[src] = buf;
+  return buf;
+}
+
+async function preloadSounds() {
+  const ctx = ensureCtx();
+  if (!ctx) return;
+  const srcs = [...new Set([SOUND_DEFAULT, ...SOUND_MAP.map((e) => e.src)])];
+  for (const src of srcs) {
+    try {
+      const buf = await decodeToBuffer(ctx, src);
+      console.log("audio listo:", src, buf.duration.toFixed(2) + "s");
+    } catch (e) {
+      console.error("Preload audio:", src, e);
+    }
+  }
+}
+
+/* Chrome exige un gesto para audio: desbloqueamos con el primer clic/tecla */
+function unlockAudioOnce() {
+  ensureCtx();
+  document.removeEventListener("pointerdown", unlockAudioOnce);
+  document.removeEventListener("keydown", unlockAudioOnce);
+}
+document.addEventListener("pointerdown", unlockAudioOnce);
+document.addEventListener("keydown", unlockAudioOnce);
+
 /* ===== Handlers CRUD ===== */
 async function handleCreateFaccion(event) {
   event.preventDefault();
@@ -141,6 +202,14 @@ async function handleCreateFaccion(event) {
 
 async function handleCreateHeroe(event) {
   event.preventDefault();
+  console.log("submit heroe");
+  let nombreSel = "";
+  try {
+    const sel = $("h-faccion");
+    nombreSel = sel.options[sel.selectedIndex]?.text || "";
+  } catch (e) {
+    console.error("Audio (no bloquea el CRUD):", e);
+  }
   try {
     await axios.post(`${API_BASE_URL}/heroes/`, {
       nombre: $("h-nombre").value.trim(),
@@ -151,6 +220,7 @@ async function handleCreateHeroe(event) {
     showMsg("Héroe creado");
     event.target.reset();
     await init();
+    reproducirSonidoFaccion(nombreSel);
   } catch (err) {
     console.error(err.response?.data);
     showMsg(getErrorDetail(err, "Error"), false);
@@ -158,22 +228,30 @@ async function handleCreateHeroe(event) {
 }
 
 async function handleDeleteFaccion(id) {
+  const f = state.facciones.find((x) => x.id === id);
   if (!window.confirm("¿Borrar facción? También borra sus héroes.")) return;
   try {
     await axios.delete(`${API_BASE_URL}/facciones/${id}`);
     showMsg("Facción eliminada");
     await init();
+    reproducirSonidoFaccion(f?.nombre || "");
   } catch (err) {
     showMsg(getErrorDetail(err, "Error al borrar"), false);
   }
 }
 
 async function handleDeleteHeroe(id) {
+  const h = state.heroes.find((x) => x.id === id);
+  const fname =
+    h?.faccion?.nombre ||
+    state.facciones.find((f) => f.id === h?.faccion_id)?.nombre ||
+    "";
   if (!window.confirm("¿Borrar héroe?")) return;
   try {
     await axios.delete(`${API_BASE_URL}/heroes/${id}`);
     showMsg("Héroe eliminado");
     await init();
+    reproducirSonidoFaccion(fname);
   } catch (err) {
     showMsg(getErrorDetail(err, "Error al borrar"), false);
   }
@@ -241,4 +319,46 @@ els.filterFaccion.addEventListener("change", applyFilters);
 els.faccionesList.addEventListener("click", handleListClick);
 els.heroesList.addEventListener("click", handleListClick);
 
+preloadSounds();
+wireSoundTestButton();
 init();
+
+// Reproduce el grito de guerra de la facción. v5: Web Audio con
+// decodificación bajo demanda + diagnóstico en consola.
+function reproducirSonidoFaccion(faccionNombre) {
+    const archivoAudio = resolveSoundSrc(faccionNombre);
+    ensureCtx();
+    playBuffer(archivoAudio).catch((e) => {
+      console.error("Audio webaudio:", archivoAudio, e);
+      try {
+        const fallback = new Audio(archivoAudio);
+        fallback.volume = 1.0;
+        window.__sfxLast = fallback;
+        const p = fallback.play();
+        if (p && typeof p.catch === "function") {
+          p.catch((e2) => console.error("Audio fallback:", archivoAudio, e2));
+        }
+      } catch (e2) {
+        console.error("Audio:", archivoAudio, e2);
+      }
+    });
+}
+
+async function playBuffer(src) {
+  const ctx = ensureCtx();
+  if (!ctx) throw new Error("sin AudioContext");
+  const buf = soundBuffers[src] || (await decodeToBuffer(ctx, src));
+  const node = ctx.createBufferSource();
+  node.buffer = buf;
+  node.connect(ctx.destination);
+  node.start(0);
+  console.log("sonando:", src, "| ctx:", ctx.state, "| dur:", buf.duration.toFixed(2) + "s");
+}
+
+/* Botón de prueba directa (sin formulario): aisla gesto vs lógica */
+function wireSoundTestButton() {
+  const btn = $("btn-test-sound");
+  if (!btn) return;
+  btn.addEventListener("click", () => reproducirSonidoFaccion("Horda"));
+}
+

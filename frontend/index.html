@@ -4,15 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warcraft 3 API - Portal</title>
+<link rel="icon" href="data:,">
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-<header><h1>Warcraft 3 API</h1><p>Portal de documentación y demo</p></header>
+<img src="assets/torch-left.gif" alt="" aria-hidden="true" class="torch left">
+<img src="assets/torch-right.gif" alt="" aria-hidden="true" class="torch right">
+<header class="hero-header"><img src="assets/darkportal.gif" alt="" aria-hidden="true" class="dark-portal"><div class="header-text"><h1>Warcraft 3 API</h1><p>Portal de documentación y demo</p></div></header>
 <main>
 <section id="docs"><h2>Documentación</h2><p>Backend: <code>http://127.0.0.1:8000</code> - Docs: <a href="http://127.0.0.1:8000/docs" target="_blank">/docs</a></p>
 <ul><li><code>GET /facciones/</code> - listar</li><li><code>GET /heroes/</code> - listar con facción</li></ul>
 <div id="status">Estado: <span id="status-text">probando...</span></div>
+<div><button id="btn-test-sound" type="button">🔊 Probar sonido (Horda)</button></div>
 </section>
 <section id="facciones"><h2>Facciones</h2><div id="facciones-list">Cargando...</div></section>
 <form id="form-faccion"><h3>Nueva facción</h3>
@@ -30,6 +34,6 @@
 <input id="search" placeholder="Buscar héroe...">
 <select id="filter-faccion"><option value="">Todas las facciones</option></select>
 </main>
-<script src="app.js"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
