@@ -162,6 +162,13 @@ curl http://127.0.0.1:8000/facciones/999
 
 Frontend usa los mismos códigos: verde OK, rojo `detail` del backend, `OK - N facciones` o `ERROR: arranca backend`.
 
+## Capturas
+
+![Swagger con paginación skip/limit](docs/swagger.png)
+![Portal web con visor y emblemas](docs/web.png)
+![POST /heroes/ con 201](docs/crear-201.png)
+![Candado 400 del Altar ante duplicado](docs/error-400.png)
+
 ## 6. Revisión de código y DB (Día 8)
 
 - Backend: `snake_case` en archivos/columnas, `PascalCase` en `Faccion/Heroe`, `joinedload` en READ, `model_dump()` + `setattr` en PUT, `HTTPException` 400/404 explícitos.
