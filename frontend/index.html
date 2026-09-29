@@ -1,39 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Warcraft 3 API - Portal</title>
-<link rel="icon" href="data:,">
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-</head>
-<body>
-<img src="assets/torch-left.gif" alt="" aria-hidden="true" class="torch left">
-<img src="assets/torch-right.gif" alt="" aria-hidden="true" class="torch right">
-<header class="hero-header"><img src="assets/darkportal.gif" alt="" aria-hidden="true" class="dark-portal"><div class="header-text"><h1>Warcraft 3 API</h1><p>Portal de documentación y demo</p></div></header>
-<main>
-<section id="docs"><h2>Documentación</h2><p>Backend: <code>http://127.0.0.1:8000</code> - Docs: <a href="http://127.0.0.1:8000/docs" target="_blank">/docs</a></p>
-<ul><li><code>GET /facciones/</code> - listar</li><li><code>GET /heroes/</code> - listar con facción</li></ul>
-<div id="status">Estado: <span id="status-text">probando...</span></div>
-<div><button id="btn-test-sound" type="button">🔊 Probar sonido (Horda)</button></div>
-</section>
-<section id="facciones"><h2>Facciones</h2><div id="facciones-list">Cargando...</div></section>
-<form id="form-faccion"><h3>Nueva facción</h3>
-<input id="f-nombre" placeholder="Nombre (ej: Horda)" required minlength="2">
-<input id="f-recurso" placeholder="Recurso especial">
-<button>Crear</button></form>
-<div id="msg"></div>
-<section id="heroes"><h2>Héroes</h2><div id="heroes-list">Cargando...</div></section>
-<form id="form-heroe"><h3>Nuevo héroe</h3>
-<input id="h-nombre" placeholder="Nombre" required>
-<input id="h-clase" placeholder="Clase (Chamán)" required>
-<select id="h-atributo"><option>Fuerza</option><option>Agilidad</option><option>Inteligencia</option></select>
-<select id="h-faccion"></select>
-<button>Crear héroe</button></form>
-<input id="search" placeholder="Buscar héroe...">
-<select id="filter-faccion"><option value="">Todas las facciones</option></select>
-</main>
-<script src="app.js?v=7"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Warcraft 3 API - Portal de Documentación y Demo</title>
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <img
+      src="assets/torch-left.gif"
+      alt=""
+      aria-hidden="true"
+      class="torch left"
+    />
+    <img
+      src="assets/torch-right.gif"
+      alt=""
+      aria-hidden="true"
+      class="torch right"
+    />
+    <header class="hero-header">
+      <div class="header-text">
+        <h1>Warcraft 3 API</h1>
+        <p>Portal de documentación y demo</p>
+      </div>
+    </header>
+    <main>
+      <div class="columns">
+        <div class="col-left">
+          <section id="docs" class="wc-panel">
+            <div class="form-inner">
+            <h2>Documentación</h2>
+            <p>
+              Backend: <code>http://127.0.0.1:8000</code> - Docs:
+              <a href="http://127.0.0.1:8000/docs" target="_blank">/docs</a>
+            </p>
+            <ul>
+              <li><code>GET /facciones/</code> - listar</li>
+              <li><code>GET /heroes/</code> - listar con facción</li>
+            </ul>
+            <div id="status">
+              Estado: <span id="status-text">probando...</span>
+            </div>
+            </div>
+          </section>
+          <form id="form-faccion" class="wc-panel">
+            <div class="form-inner">
+            <h3><span class="h-icon">⚜</span> Nueva facción</h3>
+            <input
+              id="f-nombre"
+              class="wc-input"
+              placeholder="Nombre (ej: Horda)"
+              required
+              minlength="2"
+            />
+            <input
+              id="f-recurso"
+              class="wc-input"
+              placeholder="Recurso especial"
+            />
+            <button class="wc-btn">Crear</button>
+            </div>
+          </form>
+          <div id="msg"></div>
+          <form id="form-heroe" class="wc-panel">
+            <div class="form-inner">
+            <h3><span class="h-icon">⚔</span> Nuevo héroe</h3>
+            <input
+              id="h-nombre"
+              class="wc-input"
+              placeholder="Nombre"
+              required
+            />
+            <input
+              id="h-clase"
+              class="wc-input"
+              placeholder="Clase (Chamán)"
+              required
+            />
+            <select id="h-atributo" class="wc-input">
+              <option>Fuerza</option>
+              <option>Agilidad</option>
+              <option>Inteligencia</option>
+            </select>
+            <select id="h-faccion" class="wc-input"></select>
+            <button class="wc-btn">Crear héroe</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-right">
+          <section id="visor-faccion" class="wc-panel">
+            <h2><span class="h-icon">🏰</span> Visor de Facción</h2>
+            <div class="visor-nav">
+              <button id="fac-prev" type="button" class="wc-btn nav-arrow">
+                &lt;
+              </button>
+              <div>
+                <img id="fac-imagen" class="visor-img" alt="" />
+                <p><b id="fac-nombre">—</b></p>
+                <p id="fac-recurso">—</p>
+                <p id="fac-contador">0 de 0</p>
+                <p id="fac-acciones"></p>
+              </div>
+              <button id="fac-next" type="button" class="wc-btn nav-arrow">
+                &gt;
+              </button>
+            </div>
+          </section>
+          <section id="heroe-destacado" class="wc-panel">
+            <h2><span class="h-icon">🛡️</span> Héroe Destacado</h2>
+            <input id="hero-search" class="wc-input" placeholder="Buscar por nombre o clase..." />
+            <div class="visor-nav">
+              <button id="hero-prev" type="button" class="wc-btn nav-arrow">
+                &lt;
+              </button>
+              <div>
+                <img id="hero-imagen" class="visor-img" alt="" />
+                <p><b id="hero-nombre">—</b></p>
+                <p id="hero-detalle">—</p>
+                <p id="hero-contador">0 de 0</p>
+                <p id="hero-acciones"></p>
+              </div>
+              <button id="hero-next" type="button" class="wc-btn nav-arrow">
+                &gt;
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>Warcraft 3 API Explorer • Inspirado en el estilo clásico de Warcraft III UI</p>
+    </footer>
+    <script src="app.js?v=12"></script>
+  </body>
 </html>
