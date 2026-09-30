@@ -11,12 +11,12 @@ Relación: una facción tiene muchos héroes. Un héroe pertenece a una sola fac
 - CRUD relacional completo sobre 2 tablas con PK/FK.
 - Lectura con datos relacionados (`facción con sus héroes`, `héroe con su facción`).
 - Validación con Pydantic y códigos HTTP semánticos.
-- Integridad referencial: sin `faccion_id` huérfanos, sin nombres de facción duplicados, borrado en cascada.
+- Integridad referencial: sin `faccion_id` huérfanos, sin nombres duplicados (clanes y héroes), borrado en cascada.
 
 **Frontend (cliente de soporte):**
 - Portal de documentación + demo viva.
 - Listado, creación, edición y borrado desde la web con Axios.
-- Búsqueda por nombre, filtrado por facción, mensajes de éxito/error y estados de carga.
+- Búsqueda por nombre y clase, visor carrusel con paginación, destacado sincronizado por facción, mensajes de éxito/error y estados de carga.
 - Responsive Mobile First con identidad Warcraft (oscuro + dorado).
 
 ## 2. Tecnologías
@@ -103,8 +103,8 @@ heroes(
 - `Faccion.heroes = relationship("Heroe", back_populates="faccion", cascade="all, delete-orphan")`
 - Borrar una facción borra sus héroes. No se puede crear héroe con `faccion_id` inexistente.
 
-Datos semilla actuales (limpios):
-- Horda (1) / Alianza (2) / No-muertos (3) / Elfos Nocturnos (4)
+Datos de ejemplo (vía API, IDs según orden de creación):
+- Horda / Alianza / No-muertos / Elfos Nocturnos
 - Thrall-Horda, Jaina-Alianza, Arthas-No-muertos, Tyrande-Elfos Nocturnos
 
 ## 5. Documentación de endpoints
@@ -121,7 +121,7 @@ Base: `http://127.0.0.1:8000`
 | DELETE | `/facciones/{id}` | Borrar + cascade | `id` | 200 `{detail}` | 404, 500 |
 | GET | `/heroes/` | Listar con facción + paginación | `skip`, `limit` | 200 `[HeroeWithFaccion]` | 422, 500 |
 | GET | `/heroes/{id}` | Un héroe con facción | `id` | 200 | 404, 422, 500 |
-| POST | `/heroes/` | Crear | body `HeroeCreate` | 201 | 400 `faccion_id no existe`, 422, 500 |
+| POST | `/heroes/` | Crear | body `HeroeCreate` | 201 | 400 `faccion_id no existe`, 400 duplicado del Altar, 422, 500 |
 | PUT | `/heroes/{id}` | Actualizar total | `id` + body | 200 | 404, 400 FK, 422, 500 |
 | DELETE | `/heroes/{id}` | Borrar | `id` | 200 | 404, 500 |
 
