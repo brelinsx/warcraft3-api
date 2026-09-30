@@ -63,18 +63,20 @@ Estructura:
 ```
 API REST/
   backend/
-    main.py          # app + CORS + include routers
-    database.py      # engine SQLite, SessionLocal, Base, get_db
-    models.py        # Faccion, Heroe
-    schemas.py       # Pydantic Create/Read + WithHeroes/WithFaccion
-    routers/
-      facciones.py
-      heroes.py
+    main.py          # trono: app + CORS + portales
+    config/          # settings.py (ruta de la DB)
+    database/        # engine SQLite, SessionLocal, Base, get_db
+    models/          # Faccion, Heroe (tablas 1:N)
+    schemas/         # Pydantic Create/Read + relaciones
+    controllers/     # táctica: lógica CRUD de cada clan
+    routes/          # caminos HTTP que llaman a controllers
     requirements.txt
   frontend/
     index.html
     styles.css
     app.js
+    assets/          # GIFs, retratos, emblemas y gritos mp3
+  docs/              # capturas de prueba
   warcraft3.db       # generado solo, ignorado por Git
 ```
 

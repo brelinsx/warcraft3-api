@@ -2,8 +2,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# Manantial de maná: archivo donde duerme la base de datos del reino.
-DATABASE_URL = "sqlite:///./warcraft3.db"
+from backend.config.settings import DATABASE_URL
 
 # Portal Oscuro: motor que abre el paso hacia las tierras de los datos.
 engine = create_engine(

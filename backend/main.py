@@ -1,10 +1,10 @@
-# Trono del reino: la aplicación FastAPI y sus portales (routers).
+# Trono del reino: la aplicación FastAPI y sus portales (routes).
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend import models
 from backend.database import Base, engine
-from backend.routers import facciones, heroes
+from backend.routes import facciones_router, heroes_router
 
 
 # Despertar de los Antiguos: levanta las tierras (tablas) si aún no existen.
@@ -20,8 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(facciones.router)
-app.include_router(heroes.router)
+app.include_router(facciones_router)
+app.include_router(heroes_router)
 
 
 @app.get("/", tags=["Root"])
